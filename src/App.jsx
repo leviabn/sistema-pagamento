@@ -1,15 +1,49 @@
 import { useState } from "react";
 import { FcSimCardChip } from "react-icons/fc";
 import { LuNfc } from "react-icons/lu";
+import { ToastContainer, toast } from 'react-toastify';
 
 
 function App() {
 
   const [nome, setNome] = useState("");
   const [numero, setNumero] = useState("");
+  const [mes, setMes] = useState("");
+  const [ano, setAno] = useState("");
+  const [cvv, setCvv] = useState("")
+  const [senha,setSenha] = useState("");
+
+  function handleCardNumber(event) {
+    let cardNumber = event.target.value;
+    let formattedCardNumber = cardNumber.replace(/\D/g,'');
+    formattedCardNumber = formattedCardNumber.substring(0, 16);
+    formattedCardNumber = formattedCardNumber.replace(/(\d{4})/g, '$1 ').trim();
+    setNumero(formattedCardNumber);
+  }
+
+  function sendCartao(event) {
+    event.preventDefault()
+    
+    if(!nome || !numero || !mes || !ano || !senha) {
+      toast.error("Preencha todos os campos!")
+      return
+    }
+
+    if(cvv.length !== 3) {
+      toast.error("CVV inválido")
+      return
+    }
+  }
+
   
   return (
+    
     <div className='w-full h-screen flex bg-white'>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        theme="colored"
+      />
       <div className="w-[50%] h-full relative">
         <div className="w-[60%] h-full bg-purple-800"></div>
         <div className="w-[40%] h-full"></div>
@@ -66,10 +100,11 @@ function App() {
               <label htmlFor="" className="text-[20px]">Número do cartão</label>
               <input 
                 type="text" 
+                value={numero}
                 className="w-full p-[10px] bg-gray-300 rounded-[5px]" 
                 placeholder="0000 0000 0000 0000"
                 onChange={
-                  (event) => {setNumero(event.target.value)}
+                  (event) => {handleCardNumber(event)}
                 }
               />
             </div>
@@ -78,14 +113,20 @@ function App() {
                 <label htmlFor="" className="text-[20px]">Data de expiração</label>
                 <div className="flex gap-[10px]">
                   <input 
-                    type="text"
+                    type="number"
                     className="w-[45%] p-[10px] bg-gray-300 rounded-[5px]"
                     placeholder="MM"
+                    onChange={
+                      (event) => {setMes(event.target.value)}
+                    }
                   />
                   <input 
-                    type="text"
+                    type="number"
                     className="w-[45%] p-[10px] bg-gray-300 rounded-[5px]"
-                    placeholder="MM"
+                    placeholder="AA"
+                    onChange={
+                      (event) => {setAno(event.target.value)}
+                    }
                   />
                 </div>
               </div>
@@ -102,11 +143,16 @@ function App() {
               <label htmlFor="" className="text-[20px]">Senha do cartão</label>
               <input 
                 type="password" 
-                className="w-full p-[10px] bg-gray-300 rounded-[5px]" 
+                className="w-full p-[10px] bg-gray-300 rounded-[5px]"
+                placeholder="****"
+                onChange={
+                  (event) => {setSenha(event.target.value)}
+                } 
               />
             </div>
             <div className="w-full flex items-center justify-center mt-[15px]">
               <button 
+                onClick={sendCartao}
                 type="submit" 
                 className="w-[80%] h-[45px] border-none rounded-[5px] bg-purple-800 text-white font-bold"
                 >
